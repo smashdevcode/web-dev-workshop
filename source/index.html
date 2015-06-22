@@ -23,7 +23,7 @@
 
 <div class="container">
 
-    <div>
+    <div ng-cloak>
 
         <h2>This is AngularJS!</h2>
 
@@ -218,6 +218,7 @@
 </div>
 
 <script src="bower_components/angularjs/angular.min.js"></script>
+<script src="bower_components/angular-route/angular-route.min.js"></script>
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
 <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 <script src="bower_components/lodash/lodash.min.js"></script>
@@ -230,7 +231,7 @@
 
 <script>
 
-    var app = angular.module('app', []);
+    var app = angular.module('app', ['ngRoute']);
 
 </script>
 
