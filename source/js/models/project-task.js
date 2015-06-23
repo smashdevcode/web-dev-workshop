@@ -2,13 +2,13 @@
 var ProjectTask = function (projectTaskData) {
     var self = this;
 
-    self.name = ko.observable();
-    self.completed = ko.observable(false);
-    self.hours = ko.observable(0).extend({ numeric: 1 });
+    self.name = '';
+    self.completed = false;
+    self.hours = 0;
 
     if (projectTaskData) {
-        self.name(projectTaskData.name);
-        self.completed(projectTaskData.completed);
-        self.hours(projectTaskData.hours);
+        self.name = projectTaskData.name;
+        self.completed = projectTaskData.completed;
+        self.hours = projectTaskData.hours;
     }
 };

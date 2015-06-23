@@ -3,30 +3,29 @@ var ProjectsViewModel = function() {
     var self = this,
         projectsData;
 
-    self.currentView = ko.observable('Projects');
-    self.editTitle = ko.observable();
-    self.projects = ko.observableArray();
-    self.currentProject = ko.observable(new Project());
+    // TODO need to move this to the edit project controller
+    self.editTitle = '';
+    self.projects = [];
+    self.currentProject = new Project();
 
-    self.hasProjects = ko.computed(function () {
-        var projects = self.projects();
-
-        return projects.length > 0;
-    });
+    self.hasProjects = function () {
+        return self.projects.length > 0;
+    };
 
     // retrieve and setup the projects
     projectsData = api.getProjects();
     if (projectsData) {
-        ko.utils.arrayForEach(projectsData, function (projectData) {
-            self.projects.push(new Project(projectData));
+        self.projects = projectsData.map(function (projectData) {
+            return new Project(projectData);
         });
     }
 
     self.addProject = function () {
-        self.currentProject(new Project());
-        self.editTitle('Add Project');
-        self.currentView('AddEditProject');
+        self.currentProject = new Project();
+        self.editTitle = 'Add Project';
     };
+
+    // TODO left off here
 
     self.editProject = function (project) {
         var projectData = project.getData();

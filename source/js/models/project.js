@@ -3,43 +3,33 @@ var Project = function (projectData) {
     var self = this;
 
     self.projectId = 0;
-    self.name = ko.observable('');
-    self.description = ko.observable('');
-    self.tasks = ko.observableArray();
+    self.name = '';
+    self.description = '';
+    self.tasks = [];
 
     if (projectData) {
         setData(projectData);
     }
 
-    self.hasTasks = ko.computed(function () {
-        var tasks = self.tasks();
+    self.hasTasks = function () {
+        return self.tasks.length > 0;
+    };
 
-        return tasks.length > 0;
-    });
+    self.percentComplete = function () {
+        return getPercentComplete(self.tasks);
+    };
 
-    self.percentComplete = ko.computed(function () {
-        var tasks = self.tasks();
+    self.totalHours = function () {
+        return getTotalHours(self.tasks).toFixed(1);
+    };
 
-        return getPercentComplete(tasks);
-    });
+    self.totalCompletedHours = function () {
+        return getTotalCompletedHours(self.tasks).toFixed(1);
+    };
 
-    self.totalHours = ko.computed(function () {
-        var tasks = self.tasks();
-
-        return getTotalHours(tasks).toFixed(1);
-    });
-
-    self.totalCompletedHours = ko.computed(function () {
-        var tasks = self.tasks();
-
-        return getTotalCompletedHours(tasks).toFixed(1);
-    });
-
-    self.totalRemainingHours = ko.computed(function () {
-        var tasks = self.tasks();
-
-        return getTotalRemainingHours(tasks).toFixed(1);
-    });
+    self.totalRemainingHours = function () {
+        return getTotalRemainingHours(self.tasks).toFixed(1);
+    };
 
     self.addTask = function () {
         var task = new ProjectTask();
@@ -54,9 +44,15 @@ var Project = function (projectData) {
     self.getData = function () {
         return {
             projectId: self.projectId,
-            name: self.name(),
-            description: self.description(),
-            tasks: ko.mapping.toJS(self.tasks)
+            name: self.name,
+            description: self.description,
+            tasks: self.tasks.map(function (task) {
+                return {
+                    name: task.name,
+                    completed: task.completed,
+                    hours: task.hours
+                };
+            })
         }
     };
 
@@ -79,13 +75,13 @@ var Project = function (projectData) {
 
     function getTotalHours(tasks) {
         return _.sum(tasks, function (task) {
-            return task.hours();
+            return task.hours;
         });
     }
 
     function getTotalCompletedHours(tasks) {
         return _.sum(tasks, function (task) {
-            return task.completed() ? task.hours() : 0;
+            return task.completed ? task.hours : 0;
         });
     }
 
@@ -98,14 +94,11 @@ var Project = function (projectData) {
 
     function setData(projectData) {
         self.projectId = projectData.projectId;
-        self.name(projectData.name);
-        self.description(projectData.description);
+        self.name = projectData.name;
+        self.description = projectData.description;
 
-        // make sure that the tasks array is empty
-        self.tasks.removeAll();
-
-        ko.utils.arrayForEach(projectData.tasks, function (taskData) {
-            self.tasks.push(new ProjectTask(taskData));
+        self.tasks = projectData.tasks.map(function (taskData) {
+            return new ProjectTask(taskData);
         });
     }
 };
